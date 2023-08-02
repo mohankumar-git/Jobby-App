@@ -1,0 +1,95 @@
+.nav-bar {
+  background-color: #272727;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10vh;
+}
+
+.nav-content {
+  width: 90%;
+  max-width: 1140px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  width: 65px;
+}
+
+.mobile-nav-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 0px;
+}
+
+.mobile-nav-item {
+  list-style: none;
+  margin-right: 18px;
+}
+
+.mobile-nav-icon {
+  color: #f9fafc;
+  height: 22px;
+  width: 22px;
+}
+
+.logout-mobile-btn {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  padding: 0px;
+}
+
+.nav-menu {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding-left: 0px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #f9f9f9;
+  font-size: 16px;
+  font-family: 'Roboto';
+  font-weight: 400;
+}
+
+.nav-item {
+  list-style: none;
+  margin-right: 18px;
+}
+
+.logout-button {
+  display: none;
+  background-color: #6366f1;
+  border: none;
+  border-radius: 3px;
+  outline: none;
+  padding: 6px 22px;
+  color: #f9f9f9;
+  font-size: 14px;
+  font-family: 'Roboto';
+  font-weight: 400;
+}
+
+@media (min-width: 768px) {
+  .nav-bar {
+    height: 12vh;
+  }
+  .mobile-nav-menu {
+    display: none;
+  }
+  .nav-logo {
+    width: 110px;
+  }
+  .nav-menu {
+    display: flex;
+  }
+  .logout-button {
+    display: flex;
+  }
+}
