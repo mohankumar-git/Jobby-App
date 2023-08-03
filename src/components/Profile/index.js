@@ -21,7 +21,6 @@ class Profile extends Component {
     this.setState({apiStatusView: apiStatus.inProgress})
 
     const jwtToken = Cookies.get('jwt_token')
-    const {activeEmploymentTypes, activeSalaryRange, searchInput} = this.state
 
     const apiUrl = 'https://apis.ccbp.in/profile'
     const options = {
@@ -35,7 +34,7 @@ class Profile extends Component {
     const data = await response.json()
     if (response.ok) {
       const fetchedData = data.profile_details
-      console.log(fetchedData)
+      //   console.log(fetchedData)
       const updatedData = {
         name: fetchedData.name,
         profileImageUrl: fetchedData.profile_image_url,
@@ -72,8 +71,8 @@ class Profile extends Component {
   )
 
   renderLoader = () => (
-    <div className="products-loader-container">
-      <Loader type="ThreeDots" color="#f1f5f9" height="50" width="50" />{' '}
+    <div className="loader-container">
+      <Loader type="ThreeDots" color="#4f46e5" height="50" width="50" />{' '}
     </div>
   )
 

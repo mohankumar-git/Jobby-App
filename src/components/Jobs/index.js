@@ -1,8 +1,11 @@
 import {Component} from 'react'
+import Loader from 'react-loader-spinner'
 import Cookies from 'js-cookie'
 import {BsSearch} from 'react-icons/bs'
 import Header from '../Header'
 import Profile from '../Profile'
+import FilterGroups from '../FilterGroups'
+import JobCard from '../JobCard'
 import './index.css'
 
 const apiStatus = {
@@ -25,12 +28,38 @@ class Jobs extends Component {
     this.getJobsLists()
   }
 
-  changeSearchInput = searchInput => {
-    this.setState({searchInput})
+  changeSearchInput = event => {
+    this.setState({searchInput: event.target.value})
   }
 
   onClickSearchInput = () => {
-    this.getProducts()
+    this.setState({searchInput: ''}, this.getJobsLists())
+  }
+
+  changeActiveEmploymentType = id => {
+    const {activeEmploymentTypes} = this.state
+    const activeEmploymentList = activeEmploymentTypes.filter(
+      eachItem => eachItem === id,
+    )
+    const checkActiveEmploymentList = activeEmploymentList.length === 0
+
+    if (checkActiveEmploymentList) {
+      this.setState(
+        prevState => ({
+          activeEmploymentTypes: [...prevState.activeEmploymentTypes, id],
+        }),
+        this.getJobsLists,
+      )
+    } else {
+      const filteredData = activeEmploymentTypes.filter(
+        eachItem => eachItem !== id,
+      )
+      this.setState({activeEmploymentTypes: filteredData}, this.getJobsLists)
+    }
+  }
+
+  changeActiveSalaryRange = id => {
+    this.setState({activeSalaryRange: id}, this.getJobsLists)
   }
 
   getJobsLists = async () => {
@@ -69,11 +98,37 @@ class Jobs extends Component {
     }
   }
 
+  renderJobsListView = () => {
+    const {jobsList} = this.state
+
+    return (
+      <ul className="jobs-list">
+        {jobsList.map(eachJob => (
+          <JobCard key={eachJob.id} jobDetails={eachJob} />
+        ))}
+      </ul>
+    )
+  }
+
+  renderNoJobsView = () => <h1>NoJobs</h1>
+
   renderSuccessView = () => {
     const {jobsList} = this.state
 
-    return <h1>Mohan</h1>
+    return (
+      <>
+        {jobsList.length !== 0
+          ? this.renderJobsListView()
+          : this.renderNoJobsView()}
+      </>
+    )
   }
+
+  renderLoader = () => (
+    <div className="loader-container">
+      <Loader type="ThreeDots" color="#f1f5f9" height="50" width="50" />
+    </div>
+  )
 
   renderApiView = () => {
     const {apiStatusView} = this.state
@@ -81,30 +136,63 @@ class Jobs extends Component {
     switch (apiStatusView) {
       case apiStatus.success:
         return this.renderSuccessView()
+      case apiStatus.inProgress:
+        return this.renderLoader()
       default:
         return null
     }
   }
 
   render() {
+    const {activeEmploymentTypes, activeSalaryRange, searchInput} = this.state
     return (
       <>
         <Header />
         <div className="jobs-route-container">
           <div className="jobs-route-responsive-container">
             <div className="jobs-filters-container">
+              <div className="search-container-mobile-view">
+                <input
+                  type="search"
+                  className="search-input"
+                  onChange={this.changeSearchInput}
+                  value={searchInput}
+                  placeholder="Search"
+                />
+                <button
+                  className="search-btn"
+                  type="button"
+                  onClick={this.onClickSearchInput}
+                >
+                  <BsSearch className="search-icon" />
+                </button>
+              </div>
+              <Profile />
+              <FilterGroups
+                activeEmploymentTypes={activeEmploymentTypes}
+                activeSalaryRange={activeSalaryRange}
+                changeActiveSalaryRange={this.changeActiveSalaryRange}
+                changeActiveEmploymentType={this.changeActiveEmploymentType}
+              />
+            </div>
+            <div className="jobs-list-container">
               <div className="search-container">
                 <input
                   type="search"
                   className="search-input"
                   onChange={this.changeSearchInput}
+                  value={searchInput}
                   placeholder="Search"
                 />
-                <button className="search-btn" type="button">
+                <button
+                  className="search-btn"
+                  type="button"
+                  onClick={this.onClickSearchInput}
+                >
                   <BsSearch className="search-icon" />
                 </button>
               </div>
-              <Profile />
+              {this.renderApiView()}
             </div>
           </div>
         </div>
