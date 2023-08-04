@@ -33,7 +33,15 @@ class Jobs extends Component {
   }
 
   onClickSearchInput = () => {
-    this.setState({searchInput: ''}, this.getJobsLists())
+    this.getJobsLists()
+    this.setState({searchInput: ''})
+  }
+
+  onEnterSearch = event => {
+    if (event.key === 'Enter') {
+      this.getJobsLists()
+      this.setState({searchInput: ''})
+    }
   }
 
   changeActiveEmploymentType = id => {
@@ -62,6 +70,10 @@ class Jobs extends Component {
     this.setState({activeSalaryRange: id}, this.getJobsLists)
   }
 
+  retryApi = () => {
+    this.getJobsLists()
+  }
+
   getJobsLists = async () => {
     this.setState({apiStatusView: apiStatus.inProgress})
 
@@ -70,6 +82,7 @@ class Jobs extends Component {
 
     const employmentTypes = activeEmploymentTypes.join(',')
     const apiUrl = `https://apis.ccbp.in/jobs?employment_type=${employmentTypes}&minimum_package=${activeSalaryRange}&search=${searchInput}`
+    console.log(apiUrl)
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -110,7 +123,19 @@ class Jobs extends Component {
     )
   }
 
-  renderNoJobsView = () => <h1>NoJobs</h1>
+  renderNoJobsView = () => (
+    <div className="no-jobs-container">
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/no-jobs-img.png"
+        alt="no jobs"
+        className="no-job-img"
+      />
+      <h1 className="no-jobs-heading">No Jobs Found</h1>
+      <p className="no-jobs-description">
+        We could not find any jobs. Try other filters.
+      </p>
+    </div>
+  )
 
   renderSuccessView = () => {
     const {jobsList} = this.state
@@ -130,6 +155,23 @@ class Jobs extends Component {
     </div>
   )
 
+  renderFailureView = () => (
+    <div className="error-view-container">
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/failure-img.png "
+        alt="failure view"
+        className="failure-img"
+      />
+      <h1 className="failure-heading-text">Oops! Something Went Wrong</h1>
+      <p className="failure-description">
+        We cannot seem to find the page yoy are looking for.
+      </p>
+      <button onClick={this.retryApi} className="retry-button" type="button">
+        Retry
+      </button>
+    </div>
+  )
+
   renderApiView = () => {
     const {apiStatusView} = this.state
 
@@ -138,6 +180,8 @@ class Jobs extends Component {
         return this.renderSuccessView()
       case apiStatus.inProgress:
         return this.renderLoader()
+      case apiStatus.failure:
+        return this.renderFailureView()
       default:
         return null
     }
@@ -158,6 +202,7 @@ class Jobs extends Component {
                   onChange={this.changeSearchInput}
                   value={searchInput}
                   placeholder="Search"
+                  onKeyDown={this.onEnterSearch}
                 />
                 <button
                   className="search-btn"
@@ -183,6 +228,7 @@ class Jobs extends Component {
                   onChange={this.changeSearchInput}
                   value={searchInput}
                   placeholder="Search"
+                  onKeyDown={this.onEnterSearch}
                 />
                 <button
                   className="search-btn"

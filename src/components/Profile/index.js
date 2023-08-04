@@ -17,6 +17,10 @@ class Profile extends Component {
     this.getProfile()
   }
 
+  retryApi = () => {
+    this.getProfile()
+  }
+
   getProfile = async () => {
     this.setState({apiStatusView: apiStatus.inProgress})
 
@@ -65,7 +69,7 @@ class Profile extends Component {
   }
 
   renderFailureView = () => (
-    <button type="button" className="retry-button">
+    <button onClick={this.retryApi} type="button" className="retry-button">
       Retry
     </button>
   )

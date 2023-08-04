@@ -70,7 +70,7 @@
 
 @media (min-width: 768px) {
   .profile-component {
-    height: 185px;
+    height: 165px;
   }
   .profile-img {
     width: 45px;
@@ -90,5 +90,9 @@
   }
   .filter-label {
     font-size: 16px;
+  }
+  .retry-button {
+    font-size: 16px;
+    padding: 8px 18px;
   }
 }

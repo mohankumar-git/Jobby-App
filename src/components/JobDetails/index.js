@@ -5,6 +5,7 @@ import {BsFillStarFill, BsFillBriefcaseFill} from 'react-icons/bs'
 import {MdLocationOn} from 'react-icons/md'
 import {HiExternalLink} from 'react-icons/hi'
 import Header from '../Header'
+import SimilarJobs from '../SimilarJobs'
 import './index.css'
 
 const apiStatus = {
@@ -18,6 +19,10 @@ class JobDetails extends Component {
   state = {apiStatusView: apiStatus.initial, jobDetails: '', similarJobs: []}
 
   componentDidMount() {
+    this.getJobDetails()
+  }
+
+  retryApi = () => {
     this.getJobDetails()
   }
 
@@ -90,6 +95,7 @@ class JobDetails extends Component {
 
   renderSuccessView = () => {
     const {jobDetails, similarJobs} = this.state
+    console.log(similarJobs)
     const {
       companyLogoUrl,
       companyWebsiteUrl,
@@ -102,74 +108,106 @@ class JobDetails extends Component {
       lifeAtCompany,
       skills,
     } = jobDetails[0]
-    console.log(jobDetails)
 
     const {description, imageUrl} = lifeAtCompany
 
     return (
-      <div className="job-details-container">
-        <div className="job-details-content-container">
-          <div className="job-header-container">
-            <div className="logo-title-rating-container">
+      <>
+        <div className="job-details-container">
+          <div className="job-details-content-container">
+            <div className="job-header-container">
+              <div className="logo-title-rating-container">
+                <img
+                  src={companyLogoUrl}
+                  alt="company logo"
+                  className="company-logo"
+                />
+                <div className="title-rating-container">
+                  <h1 className="job-title">{title}</h1>
+                  <div className="rating-container">
+                    <BsFillStarFill className="rating-star-icon" />
+                    <p className="rating">{rating}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="job-card-center-container">
+                <div className="company-job-type-loc">
+                  <div className="job-location-container">
+                    <MdLocationOn className="location-employment-icon" />
+                    <p className="location-employment">{location}</p>
+                  </div>
+                  <div className="job-employment-container">
+                    <BsFillBriefcaseFill className="location-employment-icon" />
+                    <p className="location-employment">{employmentType}</p>
+                  </div>
+                </div>
+                <p className="salary">{packagePerAnnum}</p>
+              </div>
+            </div>
+            <hr className="horizontal-line" />
+            <div className="job-description-container">
+              <div className="company-website-container">
+                <p className="description-title">Description</p>
+                <a className="website-link" href={companyWebsiteUrl}>
+                  <button type="button" className="visit-btn">
+                    Visit
+                  </button>
+                  <HiExternalLink className="visit-icon" />
+                </a>
+              </div>
+              <p className="job-description">{jobDescription}</p>
+            </div>
+            <div className="skills-container">
+              <h1 className="description-title">Skills</h1>
+              <ul className="skills-list">{this.renderSkills(skills)}</ul>
+            </div>
+            <div className="life-at-company-container">
+              <div className="life-at-company-blog">
+                <h1 className="description-title">Life at Company</h1>
+                <p className="job-description">{description}</p>
+              </div>
               <img
-                src={companyLogoUrl}
-                alt="company logo"
-                className="company-logo"
+                src={imageUrl}
+                className="life-at-company-img"
+                alt="life at company"
               />
-              <div className="title-rating-container">
-                <h1 className="job-title">{title}</h1>
-                <div className="rating-container">
-                  <BsFillStarFill className="rating-star-icon" />
-                  <p className="rating">{rating}</p>
-                </div>
-              </div>
             </div>
-            <div className="job-card-center-container">
-              <div className="company-job-type-loc">
-                <div className="job-location-container">
-                  <MdLocationOn className="location-employment-icon" />
-                  <p className="location-employment">{location}</p>
-                </div>
-                <div className="job-employment-container">
-                  <BsFillBriefcaseFill className="location-employment-icon" />
-                  <p className="location-employment">{employmentType}</p>
-                </div>
-              </div>
-              <p className="salary">{packagePerAnnum}</p>
-            </div>
-          </div>
-          <hr className="horizontal-line" />
-          <div className="job-description-container">
-            <div className="company-website-container">
-              <p className="description-title">Description</p>
-              <a className="website-link" href={companyWebsiteUrl}>
-                <button type="button" className="visit-btn">
-                  Visit
-                </button>
-                <HiExternalLink className="visit-icon" />
-              </a>
-            </div>
-            <p className="job-description">{jobDescription}</p>
-          </div>
-          <div className="skills-container">
-            <h1 className="description-title">Skills</h1>
-            <ul className="skills-list">{this.renderSkills(skills)}</ul>
-          </div>
-          <div className="life-at-company-container">
-            <div className="life-at-company-blog">
-              <h1 className="description-title">Life at Company</h1>
-              <p className="job-description">{description}</p>
-            </div>
-            <img
-              src={imageUrl}
-              className="life-at-company-img"
-              alt="life at company"
-            />
           </div>
         </div>
-      </div>
+        <div className="similar-jobs-container">
+          <h1 className="similar-job-text">Similar Jobs</h1>
+          <ul className="similar-jobs-list">
+            {similarJobs.map(eachJob => (
+              <SimilarJobs key={eachJob.id} similarJobDetails={eachJob} />
+            ))}
+          </ul>
+        </div>
+      </>
     )
   }
+
+  renderLoader = () => (
+    <div className="loader-container">
+      <Loader type="ThreeDots" color="#f1f5f9" height="50" width="50" />{' '}
+    </div>
+  )
+
+  renderFailureView = () => (
+    <div className="error-view-container">
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/failure-img.png "
+        alt="failure view"
+        className="failure-img"
+      />
+      <h1 className="failure-heading-text">Oops! Something Went Wrong</h1>
+      <p className="failure-description">
+        We cannot seem to find the page yoy are looking for.
+      </p>
+      <button onClick={this.retryApi} className="retry-button" type="button">
+        Retry
+      </button>
+    </div>
+  )
 
   renderApiView = () => {
     const {apiStatusView} = this.state
@@ -179,16 +217,12 @@ class JobDetails extends Component {
         return this.renderSuccessView()
       case apiStatus.inProgress:
         return this.renderLoader()
+      case apiStatus.failure:
+        return this.renderFailureView()
       default:
         return null
     }
   }
-
-  renderLoader = () => (
-    <div className="loader-container">
-      <Loader type="ThreeDots" color="#f1f5f9" height="50" width="50" />{' '}
-    </div>
-  )
 
   render() {
     return (
